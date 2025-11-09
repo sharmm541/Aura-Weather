@@ -28,7 +28,6 @@
 		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
 		<ApplicationVersion>1</ApplicationVersion>
 
-		<!-- ДОБАВЬ ЭТИ 2 СТРОКИ -->
 		<MauiSplashScreen>none</MauiSplashScreen>
 		<AssemblyProduct>Aura Weather</AssemblyProduct>
 
@@ -52,7 +51,6 @@
 		<!-- App Icon -->
 		<MauiIcon Include="Resources\AppIcon\appicon.svg" />
 
-		<!-- ЗАКОММЕНТИРУЙ ЭТУ СТРОКУ - Splash Screen -->
 		<!-- <MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#512BD4" BaseSize="128,128" /> -->
 
 		<!-- Images -->
