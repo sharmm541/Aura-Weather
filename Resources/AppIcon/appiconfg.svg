@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px">
+	<defs>
+		<linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+			<stop offset="0%" stop-color="#87CEEB"/>
+			<stop offset="100%" stop-color="#4682B4"/>
+		</linearGradient>
+	</defs>
+
+	<!-- Скругленный квадрат с голубым градиентом -->
+	<rect x="80" y="-880" width="800" height="800" rx="120" fill="url(#bg)"/>
+</svg>

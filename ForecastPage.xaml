@@ -1,0 +1,117 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="Aura.ForecastPage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:converters="clr-namespace:Aura.Converters"
+             BackgroundColor="#F8FBFE"
+             x:Name="ThisPage">
+
+    <ContentPage.Resources>
+        <converters:WeatherIconConverter x:Key="WeatherIconConverter" />
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,*,Auto">
+
+        <!-- Упрощенный хедер без фона -->
+        <Frame Grid.Row="0"
+               BackgroundColor="Transparent"
+               CornerRadius="0"
+               Padding="20,50,20,10"
+               HasShadow="False">
+            <Label Text="{Binding City, StringFormat='Прогноз для {0}'}"
+                   FontSize="20"
+                   FontAttributes="Bold"
+                   TextColor="#4FC3F7"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center"/>
+        </Frame>
+
+        <!-- Список прогноза -->
+        <CollectionView Grid.Row="1"
+                        ItemsSource="{Binding Forecast}"
+                        Margin="20,10"
+                        SelectionMode="None">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame BackgroundColor="White"
+                           CornerRadius="16"
+                           Padding="20,15"
+                           HasShadow="True"
+                           Margin="0,0,0,10">
+                        <Grid ColumnDefinitions="Auto,*,Auto" 
+                              RowDefinitions="Auto,Auto"
+                              ColumnSpacing="15">
+
+                            <Label Grid.Row="0" Grid.Column="0"
+                                   Text="{Binding Weather[0].Main, Converter={StaticResource WeatherIconConverter}}"
+                                   FontSize="30"
+                                   VerticalOptions="Center"
+                                   HorizontalOptions="Center"/>
+
+                            <StackLayout Grid.Row="0" Grid.Column="1">
+                                <Label Text="{Binding DayString}"
+                                       FontSize="16"
+                                       FontAttributes="Bold"
+                                       TextColor="#37474F"/>
+                                <Label Text="{Binding DateString}"
+                                       FontSize="12"
+                                       TextColor="#78909C"/>
+                            </StackLayout>
+
+                            <Label Grid.Row="0" Grid.Column="2"
+                                   Text="{Binding Main.Temp, StringFormat='{0:F0}°'}"
+                                   FontSize="18"
+                                   FontAttributes="Bold"
+                                   TextColor="#4FC3F7"
+                                   VerticalOptions="Center"/>
+
+                            <Label Grid.Row="1" Grid.Column="1"
+                                   Text="{Binding Weather[0].Description}"
+                                   FontSize="14"
+                                   TextColor="#78909C"
+                                   TextTransform="Uppercase"/>
+
+                            <StackLayout Grid.Row="1" Grid.Column="2"
+                                         Orientation="Horizontal"
+                                         Spacing="10">
+                                <Label Text="{Binding Main.Humidity, StringFormat='💧 {0}%'}"
+                                       FontSize="10"
+                                       TextColor="#78909C"/>
+                                <Label Text="{Binding Wind.Speed, StringFormat='💨 {0:F1} м/с'}"
+                                       FontSize="10"
+                                       TextColor="#78909C"/>
+                            </StackLayout>
+                        </Grid>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <!-- Кнопка назад внизу -->
+        <Frame Grid.Row="2"
+               BackgroundColor="Transparent"
+               CornerRadius="0"
+               Padding="20,10,20,20"
+               HasShadow="False">
+            <Button Text="‹ Назад"
+                    Clicked="OnBackClicked"
+                    BackgroundColor="#4FC3F7"
+                    TextColor="White"
+                    FontSize="16"
+                    FontAttributes="Bold"
+                    CornerRadius="20"
+                    HeightRequest="50"
+                    HorizontalOptions="Fill"
+                    VerticalOptions="Center"/>
+        </Frame>
+
+        <!-- Индикатор загрузки -->
+        <ActivityIndicator Grid.Row="1"
+                           IsVisible="{Binding IsBusy}"
+                           IsRunning="{Binding IsBusy}"
+                           Color="#4FC3F7"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center"/>
+
+    </Grid>
+</ContentPage>

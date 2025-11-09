@@ -1,0 +1,138 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="Aura.MainPage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:converters="clr-namespace:Aura.Converters"
+             BackgroundColor="#F8FBFE"
+             x:Name="ThisPage">
+
+    <ContentPage.Resources>
+        <converters:WeatherIconConverter x:Key="WeatherIconConverter" />
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <StackLayout Spacing="20" Padding="20">
+
+            <!-- Заголовок -->
+            <Label Text="Aura Weather"
+                   FontSize="28"
+                   FontAttributes="Bold"
+                   TextColor="#4FC3F7"
+                   HorizontalOptions="Center"/>
+
+            <!-- Основная информация -->
+            <Frame BackgroundColor="#4FC3F7"
+                   CornerRadius="16"
+                   Padding="20"
+                   HasShadow="True">
+                <StackLayout Spacing="10">
+                    <Label Text="{Binding CurrentWeather.City}"
+                           FontSize="20"
+                           FontAttributes="Bold"
+                           TextColor="White"
+                           HorizontalOptions="Center"/>
+
+                    <Label Text="{Binding CurrentWeather.Temperature, StringFormat='{0}°C'}"
+                           FontSize="48"
+                           FontAttributes="Bold"
+                           TextColor="White"
+                           HorizontalOptions="Center"/>
+
+                    <Label Text="{Binding CurrentWeather.Description}"
+                           FontSize="16"
+                           TextColor="White"
+                           HorizontalOptions="Center"/>
+                </StackLayout>
+            </Frame>
+
+            <!-- Детали -->
+            <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" ColumnSpacing="10" RowSpacing="10">
+                <Frame Grid.Row="0" Grid.Column="0" BackgroundColor="White" CornerRadius="12" Padding="15">
+                    <StackLayout Spacing="5">
+                        <Label Text="💧 Влажность" FontSize="12" TextColor="#666666"/>
+                        <Label Text="{Binding CurrentWeather.Humidity, StringFormat='{0}%'}" 
+                               FontSize="16" 
+                               FontAttributes="Bold"
+                               TextColor="#333333"/>
+                    </StackLayout>
+                </Frame>
+
+                <Frame Grid.Row="0" Grid.Column="1" BackgroundColor="White" CornerRadius="12" Padding="15">
+                    <StackLayout Spacing="5">
+                        <Label Text="💨 Ветер" FontSize="12" TextColor="#666666"/>
+                        <Label Text="{Binding CurrentWeather.WindSpeed, StringFormat='{0} м/с'}" 
+                               FontSize="16" 
+                               FontAttributes="Bold"
+                               TextColor="#333333"/>
+                    </StackLayout>
+                </Frame>
+
+                <Frame Grid.Row="1" Grid.Column="0" BackgroundColor="White" CornerRadius="12" Padding="15">
+                    <StackLayout Spacing="5">
+                        <Label Text="📊 Давление" FontSize="12" TextColor="#666666"/>
+                        <Label Text="{Binding CurrentWeather.Pressure, StringFormat='{0:F0} мм'}" 
+                               FontSize="16" 
+                               FontAttributes="Bold"
+                               TextColor="#333333"/>
+                    </StackLayout>
+                </Frame>
+
+                <Frame Grid.Row="1" Grid.Column="1" BackgroundColor="White" CornerRadius="12" Padding="15">
+                    <StackLayout Spacing="5">
+                        <Label Text="🧭 Направление" FontSize="12" TextColor="#666666"/>
+                        <Label Text="{Binding CurrentWeather.WindDirection}" 
+                               FontSize="16" 
+                               FontAttributes="Bold"
+                               TextColor="#333333"/>
+                    </StackLayout>
+                </Frame>
+            </Grid>
+
+            <!-- Кнопка для просмотра полного прогноза -->
+            <Frame BackgroundColor="White"
+                   CornerRadius="16"
+                   Padding="15"
+                   HasShadow="True">
+                <StackLayout Spacing="10">
+                    <Button Text="Посмотреть прогноз на 5 дней"
+                            Clicked="OnForecastClicked"
+                            BackgroundColor="Transparent"
+                            TextColor="#4FC3F7"
+                            FontSize="12"
+                            HeightRequest="30"
+                            CornerRadius="15"/>
+                </StackLayout>
+            </Frame>
+
+            <!-- Кнопки -->
+            <StackLayout Spacing="10" Orientation="Horizontal" HorizontalOptions="Center">
+                <Button Text="📍 Геолокация" 
+                        Command="{Binding UseLocationCommand}"
+                        BackgroundColor="#4FC3F7"
+                        TextColor="White"
+                        CornerRadius="20"
+                        WidthRequest="150"/>
+
+                <Button Text="🔄 Обновить" 
+                        Command="{Binding RefreshCommand}"
+                        BackgroundColor="#B3E5FC"
+                        TextColor="#0277BD"
+                        CornerRadius="20"
+                        WidthRequest="150"/>
+            </StackLayout>
+
+            <!-- Статус -->
+            <Label Text="{Binding StatusMessage}"
+                   FontSize="14"
+                   TextColor="Gray"
+                   HorizontalOptions="Center"/>
+
+            <!-- Индикатор загрузки -->
+            <ActivityIndicator IsVisible="{Binding IsBusy}"
+                               IsRunning="{Binding IsBusy}"
+                               Color="#4FC3F7"
+                               HorizontalOptions="Center"/>
+
+        </StackLayout>
+    </ScrollView>
+</ContentPage>
