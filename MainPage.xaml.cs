@@ -1,22 +1,21 @@
 ﻿using Aura.ViewModels;
 using Aura.Services;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Aura
 {
     public partial class MainPage : ContentPage
     {
-        private readonly IWeatherService _weatherService;
-        private readonly ILocationService _locationService;
-
         public MainPage()
         {
             InitializeComponent();
-            NavigationPage.SetHasNavigationBar(this, false);
-            // Создаем сервисы
-            _weatherService = new WeatherService();
-            _locationService = new LocationService();
 
-            BindingContext = new MainViewModel(_weatherService, _locationService);
+            // Получаем сервисы через DI контейнер
+            var weatherService = MauiProgram.Services.GetService<IWeatherService>();
+            var locationService = MauiProgram.Services.GetService<ILocationService>();
+            var localStorage = MauiProgram.Services.GetService<ILocalStorageService>();
+
+            BindingContext = new MainViewModel(weatherService, locationService, localStorage);
 
             // Скрываем тулбар
             NavigationPage.SetHasNavigationBar(this, false);
@@ -24,13 +23,23 @@ namespace Aura
 
         private async void OnForecastClicked(object sender, EventArgs e)
         {
+            var button = sender as Button;
+            if (button != null)
+            {
+                // Анимация нажатия кнопки
+                await button.ScaleTo(0.95, 100, Easing.CubicIn);
+                await button.ScaleTo(1, 100, Easing.CubicOut);
+            }
+
             try
             {
                 var viewModel = BindingContext as MainViewModel;
                 if (viewModel?.CurrentWeather != null && !string.IsNullOrEmpty(viewModel.CurrentWeather.City))
                 {
-                    // Используем тот же сервис погоды
-                    var forecastViewModel = new ForecastViewModel(_weatherService);
+                    var weatherService = MauiProgram.Services.GetService<IWeatherService>();
+                    var localStorage = MauiProgram.Services.GetService<ILocalStorageService>();
+
+                    var forecastViewModel = new ForecastViewModel(weatherService, localStorage);
                     await forecastViewModel.LoadForecastAsync(viewModel.CurrentWeather.City);
 
                     var forecastPage = new ForecastPage();

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Maui.ApplicationModel;
+using Microsoft.Maui.Devices.Sensors;
 
 namespace Aura.Services
 {
@@ -14,33 +15,52 @@ namespace Aura.Services
         {
             try
             {
+                // Проверяем интернет соединение
+                if (Connectivity.NetworkAccess != NetworkAccess.Internet)
+                {
+                    throw new Exception("Отсутствует интернет-соединение. Проверьте подключение к сети.");
+                }
+
                 // Проверяем и запрашиваем разрешение
                 var hasPermission = await CheckAndRequestPermissionAsync();
                 if (!hasPermission)
                 {
-                    throw new Exception("Разрешение на доступ к локации не предоставлено");
+                    throw new Exception("Разрешение на доступ к геолокации не предоставлено. Пожалуйста, предоставьте разрешение в настройках приложения.");
                 }
 
                 var request = new GeolocationRequest(GeolocationAccuracy.Medium, TimeSpan.FromSeconds(10));
                 var location = await Geolocation.GetLocationAsync(request);
 
-                return location ?? throw new Exception("Не удалось получить локацию");
+                if (location == null)
+                {
+                    throw new Exception("Не удалось получить данные о местоположении. Попробуйте позже.");
+                }
+
+                return location;
             }
-            catch (FeatureNotSupportedException fnsEx)
+            catch (FeatureNotSupportedException)
             {
-                throw new Exception("Геолокация не поддерживается на этом устройстве", fnsEx);
+                throw new Exception("Геолокация не поддерживается на этом устройстве.");
             }
-            catch (FeatureNotEnabledException fneEx)
+            catch (FeatureNotEnabledException)
             {
-                throw new Exception("Геолокация отключена на устройстве", fneEx);
+                throw new Exception("Геолокация отключена на устройстве. Включите её в настройках.");
             }
-            catch (PermissionException pEx)
+            catch (PermissionException)
             {
-                throw new Exception("Разрешение на доступ к локации не предоставлено", pEx);
+                throw new Exception("Разрешение на доступ к геолокации не предоставлено. Проверьте настройки приложения.");
             }
             catch (Exception ex)
             {
-                throw new Exception($"Ошибка получения локации: {ex.Message}", ex);
+                // Общая ошибка
+                if (ex.Message.Contains("internet", StringComparison.OrdinalIgnoreCase) ||
+                    ex.Message.Contains("network", StringComparison.OrdinalIgnoreCase) ||
+                    ex.Message.Contains("connection", StringComparison.OrdinalIgnoreCase))
+                {
+                    throw new Exception("Ошибка соединения. Проверьте подключение к интернету.");
+                }
+
+                throw new Exception($"Ошибка геолокации: {ex.Message}");
             }
         }
 
@@ -53,18 +73,28 @@ namespace Aura.Services
                 if (status == PermissionStatus.Granted)
                     return true;
 
-                if (status == PermissionStatus.Denied && DeviceInfo.Platform == DevicePlatform.iOS)
+                if (status == PermissionStatus.Denied)
                 {
                     // На iOS нельзя запрашивать повторно, если пользователь отказал
-                    throw new Exception("Разрешение на локацию отклонено. Пожалуйста, включите его в настройках устройства.");
+                    if (DeviceInfo.Platform == DevicePlatform.iOS)
+                    {
+                        throw new Exception("Разрешение на геолокацию отклонено. Включите его в настройках устройства.");
+                    }
+
+                    // На Android можно запросить снова
+                    status = await Permissions.RequestAsync<Permissions.LocationWhenInUse>();
+                }
+                else
+                {
+                    // Первый запрос
+                    status = await Permissions.RequestAsync<Permissions.LocationWhenInUse>();
                 }
 
-                status = await Permissions.RequestAsync<Permissions.LocationWhenInUse>();
                 return status == PermissionStatus.Granted;
             }
             catch (Exception ex)
             {
-                throw new Exception($"Ошибка проверки разрешений: {ex.Message}", ex);
+                throw new Exception($"Ошибка проверки разрешений: {ex.Message}");
             }
         }
     }

@@ -21,7 +21,8 @@
                    HorizontalOptions="Center"/>
 
             <!-- Основная информация -->
-            <Frame BackgroundColor="#4FC3F7"
+            <Frame x:Name="MainFrame" 
+                   BackgroundColor="#4FC3F7"
                    CornerRadius="16"
                    Padding="20"
                    HasShadow="True">
@@ -45,8 +46,70 @@
                 </StackLayout>
             </Frame>
 
+            <!-- Почасовой прогноз -->
+            <Frame x:Name="HourlyForecastFrame"
+                   BackgroundColor="White"
+                   CornerRadius="16"
+                   Padding="15"
+                   HasShadow="True"
+                   HeightRequest="140">
+                <StackLayout Spacing="10">
+                    <Label Text="Сегодня по часам" 
+                           FontSize="16" 
+                           FontAttributes="Bold"
+                           TextColor="#37474F"/>
+
+                    <CollectionView ItemsSource="{Binding HourlyForecast}"
+                                   HorizontalScrollBarVisibility="Never"
+                                   SelectionMode="None"
+                                   HeightRequest="90">
+                        <CollectionView.ItemsLayout>
+                            <LinearItemsLayout Orientation="Horizontal" ItemSpacing="10"/>
+                        </CollectionView.ItemsLayout>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Frame BackgroundColor="#F8FBFE" 
+                                       CornerRadius="12" 
+                                       Padding="12,10"
+                                       HeightRequest="80"
+                                       WidthRequest="70">
+                                    <StackLayout Spacing="4" HorizontalOptions="Center">
+                                        <Label Text="{Binding Date, StringFormat='{0:HH}:00'}"
+                                               FontSize="10"
+                                               TextColor="#78909C"
+                                               HorizontalOptions="Center"/>
+
+                                        <Label Text="{Binding Weather[0].Main, Converter={StaticResource WeatherIconConverter}}"
+                                               FontSize="16"
+                                               HorizontalOptions="Center"/>
+
+                                        <Label Text="{Binding Main.Temp, StringFormat='{0:F0}°'}"
+                                               FontSize="12"
+                                               FontAttributes="Bold"
+                                               TextColor="#4FC3F7"
+                                               HorizontalOptions="Center"/>
+
+                                        <Label Text="{Binding Weather[0].Description}"
+                                               FontSize="8"
+                                               TextColor="#78909C"
+                                               HorizontalOptions="Center"
+                                               MaxLines="2"
+                                               LineBreakMode="WordWrap"/>
+                                    </StackLayout>
+                                </Frame>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </StackLayout>
+            </Frame>
+
             <!-- Детали -->
-            <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" ColumnSpacing="10" RowSpacing="10">
+            <Grid x:Name="DetailsGrid" 
+                  ColumnDefinitions="*,*" 
+                  RowDefinitions="Auto,Auto" 
+                  ColumnSpacing="10" 
+                  RowSpacing="10">
+                
                 <Frame Grid.Row="0" Grid.Column="0" BackgroundColor="White" CornerRadius="12" Padding="15">
                     <StackLayout Spacing="5">
                         <Label Text="💧 Влажность" FontSize="12" TextColor="#666666"/>
@@ -94,38 +157,50 @@
                    Padding="15"
                    HasShadow="True">
                 <StackLayout Spacing="10">
-                    <Button Text="Посмотреть прогноз на 5 дней"
-                            Clicked="OnForecastClicked"
+                    <Button Text="Прогноз на 5 дней"
+                        Clicked="OnForecastClicked"
                             BackgroundColor="Transparent"
                             TextColor="#4FC3F7"
-                            FontSize="12"
-                            HeightRequest="30"
-                            CornerRadius="15"/>
+                            FontSize="14"
+                        HeightRequest="40"
+                        CornerRadius="20"
+                            FontAttributes="Bold"/>
                 </StackLayout>
             </Frame>
 
             <!-- Кнопки -->
-            <StackLayout Spacing="10" Orientation="Horizontal" HorizontalOptions="Center">
+            <StackLayout x:Name="ButtonsStack" 
+                         Spacing="10" 
+                         Orientation="Horizontal" 
+                         HorizontalOptions="Center">
                 <Button Text="📍 Геолокация" 
                         Command="{Binding UseLocationCommand}"
                         BackgroundColor="#4FC3F7"
                         TextColor="White"
                         CornerRadius="20"
-                        WidthRequest="150"/>
+                        HeightRequest="50"
+                        WidthRequest="150"
+                        FontSize="14"
+                        FontAttributes="Bold"/>
 
                 <Button Text="🔄 Обновить" 
                         Command="{Binding RefreshCommand}"
                         BackgroundColor="#B3E5FC"
                         TextColor="#0277BD"
                         CornerRadius="20"
-                        WidthRequest="150"/>
+                        HeightRequest="50"
+                        WidthRequest="150"
+                        FontSize="14"
+                        FontAttributes="Bold"/>
             </StackLayout>
 
             <!-- Статус -->
             <Label Text="{Binding StatusMessage}"
                    FontSize="14"
                    TextColor="Gray"
-                   HorizontalOptions="Center"/>
+                   HorizontalOptions="Center"
+                   LineBreakMode="WordWrap"
+                   MaxLines="2"/>
 
             <!-- Индикатор загрузки -->
             <ActivityIndicator IsVisible="{Binding IsBusy}"
